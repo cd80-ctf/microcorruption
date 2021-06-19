@@ -10,13 +10,13 @@ We are given the assembly code of a program that runs on a lock. The goal is to 
 
 Since the program is short, it is straightforward enough to start at `main`:
 
-![main function](main.png)
+![main function](main.png?raw=true)
 
 We see that `unlock_door` is called if the return value of `check_password` (stored in `r15`) is nonzero.
 
 The code of `check_password` is as follows:
 
-![check_password](check_password.png)
+![check_password](check_password.png?raw=true)
 
 The first four lines iterate over what is assumed to be a null-terminated string stored at the address in `r15`. For each character, *including the terminating byte*,
 it increments a counter in `r12`. After reaching the null byte, this value (which will be the length of the string plus one) is compared to 9. If the length plus one is
