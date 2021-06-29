@@ -3,16 +3,15 @@
 ## Problem
 Same deal as always - find an input to open the lock. This time, the patch notes tell us that the `unlock_door` function has been removed.
 
-![manual]()
+![manual](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%206%20%7C%20Whitehorse/manual.PNG)
 
 ## Reasoning
 
 ### Stack overflow
 
-A quick check of `login` tells us that the stack overflow from Level 4 is still present; that is, `0x10` bytes are allocated for the stack, but `0x30` bytes of password
-are copied to the stack pointer.
+A quick check of `login` tells us that the stack overflow from Level 4 is still present; that is, `0x10` bytes are allocated for the stack, but `0x30` bytes worth of password are copied to the stack pointer.
 
-![overflow]()
+![overflow](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%206%20%7C%20Whitehorse/overflow.PNG)
 
 This gives us the ability to overwrite the return pointer. However, since `unlock_door` is no longer present in memory, we must figure out something else to overwrite
 the return pointer with.
@@ -24,11 +23,11 @@ with the address of the password.
 
 The [lock manual](https://microcorruption.com/manual.pdf) tells us that calling an interrupt with the code `0x7f` and no arguments will unlock the door:
 
-![interrupt]()
+![interrupt](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%206%20%7C%20Whitehorse/interrupt_in_conditional.PNG)
 
 This seems simple enough to fit in 16 bytes. We can use the segment of `conditional_unlock_door` where an interrupt is called with code `0x7e` as reference:
 
-![interrupt_in_conditional]()
+![interrupt_in_conditional](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%206%20%7C%20Whitehorse/interrupt.PNG)
 
 Based on this, our shellcode will look something like this:
 
