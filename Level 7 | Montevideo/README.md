@@ -5,7 +5,7 @@
 Same deal as always - find an input that opens the door. This time, the patch notes warn of 'unconfirmed reports' of the lock's vulnerability and ominously mention
 that their code has been reimplemented per their "Secure Development Process."
 
-![manual]()
+![manual](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%207%20%7C%20Montevideo/manual.PNG)
 
 ## Reasoning
 
@@ -13,7 +13,7 @@ that their code has been reimplemented per their "Secure Development Process."
 
 Apparently, this "Secure Development Process" implies replacing a `getsn` overflow with a `strcpy` overflow. The new login function begins as follows:
 
-![new_login]()
+![new_login](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%207%20%7C%20Montevideo/new_login.PNG)
 
 There are four parts to this code: 
 
@@ -29,7 +29,7 @@ and profit. *Note that, despite the similarities, our solution from Level 6 will
 
 First, we need to find out what opens the lock. Reading the manual reveals that calling an interrupt with code `0x7f` will do what we want:
 
-![7f_interrupt]()
+![7f_interrupt](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%207%20%7C%20Montevideo/7f_interrupt.PNG)
 
 Given this, the most obvious shellcode would be
 
