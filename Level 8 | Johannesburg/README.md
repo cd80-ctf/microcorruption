@@ -4,7 +4,7 @@
 
 Same deal as always -- find an input that opens the door. This time, the patch notes inform us that "passwords that are too long will be rejected".
 
-![manual]()
+![manual](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%208%20%7C%20Johannesburg/manual.PNG)
 
 ## Reasoning
 
@@ -13,12 +13,12 @@ Same deal as always -- find an input that opens the door. This time, the patch n
 Checking the `login` function reveals a typical stack overflow: `0x12` bytes are allocated on the stack, but a password of length up to  `0x3f` is copied to the
 stack pointer.
 
-![overflow]()
+![overflow](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%208%20%7C%20Johannesburg/overflow.PNG)
 
 This time, however, there's a hardcoded stack cookie. At the start of `login`, the lowest byte on the stack is set to `0x28`. At the end of the program, the lowest byte
 is checked against `0x28`; if it does't match, the program exits immediately without returning.
 
-![check_cookie]()
+![check_cookie](https://raw.githubusercontent.com/cd80-ctf/microcorruption/main/Level%208%20%7C%20Johannesburg/check_cookie.PNG)
 
 Since this is a hardcoded cookie that is presumably the same in all instances of the lock, it can easily be defeated by entering a password containing `0x11` bytes of
 filler, the byte `0x28`, and finally the address to overwrite the return pointer. In this case, the lock's code contains the previously absent `unlock_door` function,
