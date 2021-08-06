@@ -5,7 +5,7 @@
 Same deal as always -- find an input that opens the door. This is one of the two final levels, where things get *really* interesting. If you can keep up and complete
 this one, you'll (at time of writing) be in the top 1,000 of the 80,000 who've attempted this CTF.
 
-![manual]()
+![manual](https://user-images.githubusercontent.com/86139991/128437596-c0768234-4124-4275-86d8-eec4dda810ff.PNG)
 
 ## Reasoning
 
@@ -14,7 +14,7 @@ this one, you'll (at time of writing) be in the top 1,000 of the 80,000 who've a
 The new manual brags about the LockIt Pro Account Manager, a new system which can store hundreds of users and their PINs. When we run the program, we are prompted
 to enter such a username and PIN:
 
-![input_1]()
+![input_1](https://user-images.githubusercontent.com/86139991/128437603-e6799666-1923-43b0-8a5a-fe7517a5f2cd.PNG)
 
 Entering random data for these will clearly get us nowhere. Let's look at the code to see what it's actually doing.
 
@@ -22,14 +22,13 @@ The bulk of the program is inside the `run` function, which is an infinite loop.
 bytes. This, combined with the fact that `run` doesn't even have a `ret` instruction, means that looking for stack overflows in this function will be unfruitful.
 
 Further inspection, however, reveals another command that the input prompt didn't tell us about. The function seems to check for a seven-letter word starting with "a" --
-this is "access" -- but also checks for a three-letter word starting with "n". Looking at the data section, we find several strings related to adding accounts. Thus we
-can guess that this keyword is intended to be "new", and will have the syntax "new [username] [PIN]".
+this is "access" -- but also checks for a three-letter word starting with "n". Looking at the data section, we find several strings related to adding accounts. Thus we can guess that this keyword is intended to be "new", and will have the syntax "new [username] [PIN]".
 
-![strings]()
+![strings](https://user-images.githubusercontent.com/86139991/128437618-ca9ae6f1-5729-4d37-b2b0-6c37a46d1197.PNG)
 
 Our first thought would obviously be to add an account and then immediately try to log in with it. However, this produces a new error message:
 
-![not_activated]()
+![not_activated](https://user-images.githubusercontent.com/86139991/128437630-91aa8cc6-3ba2-41e1-9ab9-b74850a4a8a2.PNG)
 
 We'll either have to figure out how to activate accounts, or find another way to open the door.
 
@@ -68,7 +67,7 @@ a hash that's 4 mod 8 will be stored in a list made specifically for objects who
 If we look at the heap, we can see the heap chunks that the Account Manager allocates for the different lists in its hash map. Note that the `user` object we created
 earlier is in the first list and takes up `0x12` bytes:
 
-![hash_buckets]()
+![hash_buckets](https://user-images.githubusercontent.com/86139991/128437638-4e0f7782-c1b4-4402-86c1-6f55786e9d23.PNG)
 
 Further examining the `add_to_table` function reveals that a counter in memory is incremented every time the function is called. If this counter exceeds some
 calculated value, the `rehash` function is called. Setting a breakpoint at this step reveals that, by default, up to `0xa` values can be stored in the hashmap before
@@ -95,14 +94,14 @@ computes its hash, and outputs where it will be placed in memory given how many 
 Let's try to add enough elements to the first hash list (starting at `0x503c`) to overwrite the headers of the second hash list (starting at `0x509c`). Before adding
 our values, the hash lists look like this:
 
-![hash_lists_pre_exploit]
+![hash_lists_pre_exploit](https://user-images.githubusercontent.com/86139991/128437647-04a9580e-ecc9-4d4b-92b8-435129f0bb34.PNG)
 
 After adding several values which our script confirms will land in the same list, they look like this (note our username/PIN pairs `0x10` bytes apart are highlighted
 in red, and the vulnerable heap metadata is in green):
 
-![hash_lists_almost_exploit]
+![hash_lists_almost_exploit](https://user-images.githubusercontent.com/86139991/128437661-b5ffbcb4-8195-4c1f-9b9e-d92852aeeb33.png)
 
-Beautiful! The username of the next value we add to this list will start right on top of the next list's metadata.
+Beautiful. The username of the next value we add to this list will start right on top of the next list's metadata.
 
 ## Heap corruption
 
@@ -118,7 +117,7 @@ Well, unlike in the first program where no new chunks were `malloc`'d before our
 anything. When this happens, the zero lower byte in our corrupted chunk's size will tell `malloc` that this chunk can be recycled into the newly requested chunk. This
 sets the chunk headers back to reasonable values and prevents our `free` exploit from working.
 
-![evil_mallocs]()
+![evil_mallocs](https://user-images.githubusercontent.com/86139991/128437674-3858c43f-f022-4d7c-bdf2-1ec10fc64761.PNG)
 
 How can we fix this? At first glance, it seems like our `size` must have a zero low bit, since the return address is at an even address and our shellcode must start
 at an even address (lest we get an `isn address unaligned` error). However, closely examining the `free` function reveals that this is not a problem at all: before
