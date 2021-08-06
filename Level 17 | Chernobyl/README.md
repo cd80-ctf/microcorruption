@@ -89,7 +89,7 @@ metadata at the start of the next list.* This will be the key observation for ou
 ## Creating collisions
 
 In order to easily create different usernames which fall in the same hash bucket, we created a simple Python script. This script takes the username (as a list of bytes),
-computes its hash, and outputs where it will be placed in memory given how many elements are already in the hashmap. The full script can be found in `main.py`.
+computes its hash, and outputs where it will be placed in memory given how many elements are already in the hashmap. The full script can be found in `hash.py`.
 
 Let's try to add enough elements to the first hash list (starting at `0x503c`) to overwrite the headers of the second hash list (starting at `0x509c`). Before adding
 our values, the hash lists look like this:
