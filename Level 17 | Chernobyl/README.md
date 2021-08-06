@@ -16,7 +16,7 @@ to enter such a username and PIN:
 
 ![input_1](https://user-images.githubusercontent.com/86139991/128437603-e6799666-1923-43b0-8a5a-fe7517a5f2cd.PNG)
 
-Entering random data for these will clearly get us nowhere. Let's look at the code to see what it's actually doing.
+Entering random data for these will clearly get us nowhere. Let's look at the code to see what actually going on.
 
 The bulk of the program is inside the `run` function, which is an infinite loop. This function allocates `0x600` bytes on the stack, and on each iteration reads in `0x550`
 bytes. This, combined with the fact that `run` doesn't even have a `ret` instruction, means that looking for stack overflows in this function will be unfruitful.
@@ -35,7 +35,7 @@ We'll either have to figure out how to activate accounts, or find another way to
 ## Activating accounts is useless
 
 We can quickly determine that "activating" accounts is unhelpful. Checking the code for instances of the string "Access granted" (which we find in the data section)
-shows that this doesn't actually open the door; in fact, it seems the loop just continues is normal. If we want to open this lock, we'll have to dig into how the
+shows that this doesn't actually open the door; in fact, it seems the loop just continues as normal. If we want to open this lock, we'll have to dig into how the
 Account Manager actually works. This will not be easy, but will end with us developing by far the most realistic exploit of the CTF thus far.
 
 ## The hash table
